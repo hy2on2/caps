@@ -332,7 +332,7 @@
       company,
       representative: rep,
       date: todayStr,
-      signature: canvas.toDataURL('image/png')
+      signature: (function() { const small = document.createElement('canvas'); small.width = 400; small.height = 120; small.getContext('2d').drawImage(canvas, 0, 0, 400, 120); return small.toDataURL('image/jpeg', 0.3); })()
     };
 
     let pdfUrl = null;
