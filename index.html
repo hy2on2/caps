@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>원격 영상관제 서비스 미사용 동의서 | ADT캡스</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500&display=swap');
+
+  :root {
+    --navy: #0a1628;
+    --adt-blue: #003087;
+    --adt-red: #e8002d;
+    --light: #f5f6f8;
+    --border: #d0d5dd;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --white: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--light);
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 16px;
+  }
+
+  .page-wrapper { max-width: 760px; margin: 0 auto; }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--adt-blue);
+  }
+
+  .adt-logo { display: flex; align-items: center; gap: 6px; font-size: 22px; font-weight: 700; color: var(--adt-blue); }
+  .adt-logo span.bold { font-weight: 900; background: var(--adt-blue); color: white; padding: 2px 6px; border-radius: 3px; }
+  .security-badge { font-size: 11px; color: var(--muted); text-align: right; line-height: 1.4; }
+
+  .document { background: var(--white); border-radius: 12px; box-shadow: 0 4px 24px rgba(0,48,135,0.10); overflow: hidden; }
+  .doc-top-bar { background: var(--adt-blue); height: 6px; }
+  .doc-body { padding: 52px 56px 40px; }
+
+  .doc-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 22px; font-weight: 700;
+    text-align: center; letter-spacing: 2px; color: var(--navy);
+    margin-bottom: 44px; padding-bottom: 24px;
+    border-bottom: 1.5px solid var(--border);
+  }
+
+  .doc-content { font-size: 15px; line-height: 2.2; color: var(--text); margin-bottom: 48px; }
+  .doc-content p { margin-bottom: 8px; }
+
+  .fields-section { margin-bottom: 40px; }
+  .field-row { display: flex; align-items: center; margin-bottom: 20px; gap: 16px; }
+  .field-label { font-size: 14px; font-weight: 500; color: var(--text); width: 80px; flex-shrink: 0; }
+
+  .field-input {
+    flex: 1; border: none; border-bottom: 1.5px solid var(--border);
+    padding: 6px 4px; font-size: 14px; font-family: 'Noto Sans KR', sans-serif;
+    color: var(--text); background: transparent; outline: none; transition: border-color 0.2s;
+  }
+  .field-input:focus { border-bottom-color: var(--adt-blue); }
+
+  /* 날짜 읽기 전용 스타일 */
+  .date-display {
+    flex: 1; border-bottom: 1.5px solid var(--border);
+    padding: 6px 4px; font-size: 14px; color: var(--text);
+  }
+
+  .signature-section { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 36px; }
+  .sig-header {
+    background: var(--light); padding: 12px 20px;
+    font-size: 13px; font-weight: 500; color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .sig-clear {
+    background: none; border: 1px solid var(--border); padding: 4px 10px;
+    border-radius: 4px; font-size: 12px; color: var(--muted);
+    cursor: pointer; font-family: 'Noto Sans KR', sans-serif; transition: all 0.2s;
+  }
+  .sig-clear:hover { border-color: var(--adt-red); color: var(--adt-red); }
+
+  #signatureCanvas { display: block; width: 100%; height: 180px; cursor: crosshair; touch-action: none; background: white; }
+  .sig-instruction { font-size: 12px; color: var(--muted); text-align: center; padding: 10px; background: var(--light); border-top: 1px solid var(--border); }
+
+  .submit-area { text-align: center; }
+  .submit-btn {
+    background: var(--adt-blue); color: white; border: none;
+    padding: 16px 64px; font-size: 15px; font-weight: 500;
+    font-family: 'Noto Sans KR', sans-serif; border-radius: 8px;
+    cursor: pointer; letter-spacing: 0.5px; transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0,48,135,0.25);
+  }
+  .submit-btn:hover { background: #002070; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,48,135,0.35); }
+  .submit-btn:disabled { background: #aab4c8; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* 팝업 */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55); z-index: 100;
+    align-items: center; justify-content: center; padding: 24px;
+  }
+  .overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .popup {
+    background: white; border-radius: 16px; padding: 44px 36px;
+    text-align: center; max-width: 380px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  .check-icon { width: 60px; height: 60px; background: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
+  .check-icon svg { width: 30px; height: 30px; stroke: #2e7d32; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  .popup-title { font-family: 'Noto Serif KR', serif; font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+  .popup-desc { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 18px; }
+  .popup-info { background: var(--light); border-radius: 8px; padding: 12px 16px; font-size: 13px; color: var(--text); margin-bottom: 18px; text-align: left; line-height: 1.9; }
+
+  .popup-btns { display: flex; flex-direction: column; gap: 8px; }
+  .btn-pdf { display: none; background: white; color: var(--adt-blue); border: 1.5px solid var(--adt-blue); padding: 11px; border-radius: 8px; font-size: 13px; font-family: 'Noto Sans KR', sans-serif; text-decoration: none; }
+  .btn-close { background: var(--adt-blue); color: white; border: none; padding: 11px; border-radius: 8px; font-size: 13px; font-family: 'Noto Sans KR', sans-serif; cursor: pointer; }
+
+  .section-divider { border: none; border-top: 1px dashed var(--border); margin: 36px 0; }
+  .section-label { font-size: 12px; font-weight: 500; color: var(--adt-blue); letter-spacing: 1px; margin-bottom: 16px; }
+
+  .msg { display: none; font-size: 13px; margin: 12px 0; text-align: center; }
+  .msg.error { color: var(--adt-red); }
+  .msg.loading { color: var(--muted); }
+
+  @media (max-width: 580px) {
+    .doc-body { padding: 36px 24px 32px; }
+    .doc-title { font-size: 18px; letter-spacing: 1px; }
+    .doc-content { font-size: 14px; }
+    .submit-btn { width: 100%; padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+  <div class="header">
+    <div class="adt-logo"><span class="bold">ADT</span> 캡스</div>
+    <div class="security-badge">WORLD No.1 SECURITY<br>전자 동의서 시스템</div>
+  </div>
+
+  <div class="document">
+    <div class="doc-top-bar"></div>
+    <div class="doc-body">
+
+      <div class="doc-title">원격 영상관제 서비스 미사용 동의서</div>
+
+      <div class="doc-content">
+        <p>ADT캡스 에서 제공하는 원격영상관제서비스 ( 비대면모니터링 ) 에 대해 설명을 들었으며</p>
+        <p>해당 서비스 목적과 내용에 대해 이해 하였습니다.</p>
+        <br>
+        <p>다만, 본인은 개인적인 사유에 따라 해당 서비스 이용을 원하지 않으며,</p>
+        <p>이에 따라 해당 서비스 이용은 진행하지 않기로 결정 하였습니다.</p>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="fields-section">
+        <div class="section-label">기본 정보</div>
+        <div class="field-row">
+          <span class="field-label">상 호</span>
+          <input class="field-input" type="text" id="companyName" placeholder="상호명을 입력하세요">
+        </div>
+        <div class="field-row">
+          <span class="field-label">대표자</span>
+          <input class="field-input" type="text" id="representative" placeholder="대표자 성명을 입력하세요">
+        </div>
+        <div class="field-row">
+          <span class="field-label">작성일</span>
+          <!-- 날짜는 자동으로 오늘 날짜 표시, 수정 불가 -->
+          <span class="date-display" id="dateDisplay"></span>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <div class="section-label">전자 서명</div>
+      <div class="signature-section">
+        <div class="sig-header">
+          <span>아래 공간에 서명해 주세요</span>
+          <button class="sig-clear" onclick="clearSignature()">지우기</button>
+        </div>
+        <canvas id="signatureCanvas"></canvas>
+        <div class="sig-instruction">마우스 또는 손가락으로 서명란에 서명하세요</div>
+      </div>
+
+      <div class="msg error" id="errorMsg">⚠ 서명 및 필수 항목(상호, 대표자)을 모두 입력해 주세요.</div>
+      <div class="msg loading" id="loadingMsg">⏳ 제출 중입니다... 잠시만 기다려 주세요.</div>
+
+      <div class="submit-area">
+        <button class="submit-btn" id="submitBtn" onclick="submitForm()">동의서 제출</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 완료 팝업 -->
+<div class="overlay" id="overlay">
+  <div class="popup">
+    <div class="check-icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="popup-title">동의서가 제출되었습니다</div>
+    <div class="popup-desc">원격 영상관제 서비스 미사용 동의서가<br>정상적으로 접수되었습니다.</div>
+    <div class="popup-info" id="popupInfo"></div>
+    <div class="popup-btns">
+      <a class="btn-pdf" id="pdfLink" href="#" target="_blank">📄 PDF 열기</a>
+      <button class="btn-close" onclick="closePopup()">확인</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ✅ Apps Script 웹앱 URL
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzJYyElKZ07gbkh_xt-g1ZLurrj1GBpq4J4nYAqoGvhlaBW5Zl1hrDPzowr6dPQVhXPQQ/exec';
+
+  // 오늘 날짜 자동 표시 (매일 자동으로 바뀜)
+  function getTodayStr() {
+    return new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+  document.getElementById('dateDisplay').textContent = getTodayStr();
+
+  // 서명 캔버스
+  const canvas = document.getElementById('signatureCanvas');
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+  let hasSig = false;
+
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.strokeStyle = '#1a1a2e';
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  }
+
+  resizeCanvas();
+  window.addEventListener('resize', () => { resizeCanvas(); hasSig = false; });
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    if (e.touches) return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  canvas.addEventListener('mousedown', e => { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+  canvas.addEventListener('mousemove', e => { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; });
+  canvas.addEventListener('mouseup', () => drawing = false);
+  canvas.addEventListener('mouseleave', () => drawing = false);
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, { passive: false });
+  canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; }, { passive: false });
+  canvas.addEventListener('touchend', () => drawing = false);
+
+  function clearSignature() {
+    const dpr = window.devicePixelRatio || 1;
+    ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+    hasSig = false;
+  }
+
+  // JSONP 전송 (CORS 우회)
+  function sendJsonp(payload) {
+    return new Promise((resolve) => {
+      const cbName = 'jsonpCb_' + Date.now();
+      const script = document.createElement('script');
+
+      window[cbName] = function(res) {
+        delete window[cbName];
+        if (document.body.contains(script)) document.body.removeChild(script);
+        resolve(res);
+      };
+
+      script.onerror = function() {
+        delete window[cbName];
+        if (document.body.contains(script)) document.body.removeChild(script);
+        resolve({ result: 'error' });
+      };
+
+      // 서명 이미지가 크므로 별도 전송
+      const encoded = encodeURIComponent(JSON.stringify(payload));
+      script.src = `${SHEET_URL}?callback=${cbName}&data=${encoded}`;
+      document.body.appendChild(script);
+
+      // 30초 타임아웃 (PDF 생성 시간 고려)
+      setTimeout(() => {
+        if (window[cbName]) {
+          delete window[cbName];
+          if (document.body.contains(script)) document.body.removeChild(script);
+          resolve({ result: 'timeout' });
+        }
+      }, 30000);
+    });
+  }
+
+  async function submitForm() {
+    const company = document.getElementById('companyName').value.trim();
+    const rep = document.getElementById('representative').value.trim();
+    const errEl = document.getElementById('errorMsg');
+    const loadEl = document.getElementById('loadingMsg');
+    const btn = document.getElementById('submitBtn');
+
+    if (!company || !rep || !hasSig) {
+      errEl.style.display = 'block';
+      return;
+    }
+
+    errEl.style.display = 'none';
+    loadEl.style.display = 'block';
+    btn.disabled = true;
+
+    const todayStr = getTodayStr();
+
+    const payload = {
+      company,
+      representative: rep,
+      date: todayStr,
+      signature: canvas.toDataURL('image/png')
+    };
+
+    let pdfUrl = null;
+    try {
+      const res = await sendJsonp(payload);
+      pdfUrl = res.pdfUrl || null;
+    } catch (err) {
+      console.error('전송 오류:', err);
+    }
+
+    loadEl.style.display = 'none';
+    btn.disabled = false;
+
+    document.getElementById('popupInfo').innerHTML =
+      `<strong>상 호</strong>: ${company}<br>` +
+      `<strong>대표자</strong>: ${rep}<br>` +
+      `<strong>작성일</strong>: ${todayStr}`;
+
+    const pdfEl = document.getElementById('pdfLink');
+    if (pdfUrl) {
+      pdfEl.href = pdfUrl;
+      pdfEl.style.display = 'block';
+    }
+
+    document.getElementById('overlay').classList.add('active');
+  }
+
+  function closePopup() {
+    document.getElementById('overlay').classList.remove('active');
+    document.getElementById('companyName').value = '';
+    document.getElementById('representative').value = '';
+    clearSignature();
+    // 날짜 다시 갱신 (자정 넘어서 제출 시 대비)
+    document.getElementById('dateDisplay').textContent = getTodayStr();
+  }
+</script>
+</body>
+</html>
