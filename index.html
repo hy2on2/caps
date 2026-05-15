@@ -273,6 +273,7 @@
   }
 
   function closePopup() {
+    window.close();
     document.getElementById('overlay').classList.remove('active');
     document.getElementById('companyName').value = '';
     document.getElementById('representative').value = '';
