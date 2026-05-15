@@ -39,97 +39,116 @@
   .submit-btn { background: var(--adt-blue); color: white; border: none; padding: 16px 64px; font-size: 15px; font-weight: 500; font-family: 'Noto Sans KR', sans-serif; border-radius: 8px; cursor: pointer; letter-spacing: 0.5px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,48,135,0.25); }
   .submit-btn:hover { background: #002070; transform: translateY(-1px); }
   .submit-btn:disabled { background: #aab4c8; cursor: not-allowed; transform: none; box-shadow: none; }
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 100; align-items: center; justify-content: center; padding: 24px; }
-  .overlay.active { display: flex; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  .popup { background: white; border-radius: 16px; padding: 44px 36px; text-align: center; max-width: 380px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: slideUp 0.3s ease; }
-  @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .check-icon { width: 60px; height: 60px; background: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
-  .check-icon svg { width: 30px; height: 30px; stroke: #2e7d32; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .popup-title { font-family: 'Noto Serif KR', serif; font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
-  .popup-desc { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 18px; }
-  .popup-info { background: var(--light); border-radius: 8px; padding: 12px 16px; font-size: 13px; color: var(--text); margin-bottom: 18px; text-align: left; line-height: 1.9; }
-  .popup-btns { display: flex; flex-direction: column; gap: 8px; }
-  .btn-pdf { display: none; background: white; color: var(--adt-blue); border: 1.5px solid var(--adt-blue); padding: 11px; border-radius: 8px; font-size: 13px; font-family: 'Noto Sans KR', sans-serif; text-decoration: none; }
-  .btn-close { background: var(--adt-blue); color: white; border: none; padding: 11px; border-radius: 8px; font-size: 13px; font-family: 'Noto Sans KR', sans-serif; cursor: pointer; }
   .section-divider { border: none; border-top: 1px dashed var(--border); margin: 36px 0; }
   .section-label { font-size: 12px; font-weight: 500; color: var(--adt-blue); letter-spacing: 1px; margin-bottom: 16px; }
   .msg { display: none; font-size: 13px; margin: 12px 0; text-align: center; }
   .msg.error { color: var(--adt-red); }
   .msg.loading { color: var(--muted); }
+
+  /* 완료 화면 */
+  .done-screen {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+  .done-screen.active { display: flex; animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .done-card {
+    background: white; border-radius: 20px; padding: 60px 48px;
+    text-align: center; max-width: 440px; width: 100%;
+    box-shadow: 0 8px 40px rgba(0,48,135,0.12);
+  }
+  .done-icon { width: 80px; height: 80px; background: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; }
+  .done-icon svg { width: 40px; height: 40px; stroke: #2e7d32; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .done-title { font-family: 'Noto Serif KR', serif; font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
+  .done-desc { font-size: 14px; color: var(--muted); line-height: 1.8; margin-bottom: 28px; }
+  .done-info { background: var(--light); border-radius: 10px; padding: 16px 20px; font-size: 13px; color: var(--text); margin-bottom: 28px; text-align: left; line-height: 2; }
+  .done-notice { font-size: 13px; color: var(--muted); background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px; padding: 12px 16px; line-height: 1.7; }
+  .done-pdf { display: none; margin-top: 16px; }
+  .btn-pdf { background: white; color: var(--adt-blue); border: 1.5px solid var(--adt-blue); padding: 12px 32px; border-radius: 8px; font-size: 13px; font-family: 'Noto Sans KR', sans-serif; text-decoration: none; display: inline-block; }
+  .done-logo { margin-top: 32px; font-size: 13px; font-weight: 700; color: var(--adt-blue); letter-spacing: 1px; }
+
   @media (max-width: 580px) {
     .doc-body { padding: 36px 24px 32px; }
     .doc-title { font-size: 18px; letter-spacing: 1px; }
     .doc-content { font-size: 14px; }
     .submit-btn { width: 100%; padding: 16px; }
+    .done-card { padding: 48px 28px; }
   }
 </style>
 </head>
 <body>
 
-<div class="page-wrapper">
-  <div class="header">
-    <div class="adt-logo"><span class="bold">ADT</span> 캡스</div>
-    <div class="security-badge">WORLD No.1 SECURITY<br>전자 동의서 시스템</div>
-  </div>
-  <div class="document">
-    <div class="doc-top-bar"></div>
-    <div class="doc-body">
-      <div class="doc-title">원격 영상관제 서비스 미사용 동의서</div>
-      <div class="doc-content">
-        <p>ADT캡스 에서 제공하는 원격영상관제서비스 ( 비대면모니터링 ) 에 대해 설명을 들었으며</p>
-        <p>해당 서비스 목적과 내용에 대해 이해 하였습니다.</p>
-        <br>
-        <p>다만, 본인은 개인적인 사유에 따라 해당 서비스 이용을 원하지 않으며,</p>
-        <p>이에 따라 해당 서비스 이용은 진행하지 않기로 결정 하였습니다.</p>
-      </div>
-      <hr class="section-divider">
-      <div class="fields-section">
-        <div class="section-label">기본 정보</div>
-        <div class="field-row">
-          <span class="field-label">상 호</span>
-          <input class="field-input" type="text" id="companyName" placeholder="상호명을 입력하세요">
+<!-- 동의서 폼 -->
+<div id="formScreen">
+  <div class="page-wrapper">
+    <div class="header">
+      <div class="adt-logo"><span class="bold">ADT</span> 캡스</div>
+      <div class="security-badge">WORLD No.1 SECURITY<br>전자 동의서 시스템</div>
+    </div>
+    <div class="document">
+      <div class="doc-top-bar"></div>
+      <div class="doc-body">
+        <div class="doc-title">원격 영상관제 서비스 미사용 동의서</div>
+        <div class="doc-content">
+          <p>ADT캡스 에서 제공하는 원격영상관제서비스 ( 비대면모니터링 ) 에 대해 설명을 들었으며</p>
+          <p>해당 서비스 목적과 내용에 대해 이해 하였습니다.</p>
+          <br>
+          <p>다만, 본인은 개인적인 사유에 따라 해당 서비스 이용을 원하지 않으며,</p>
+          <p>이에 따라 해당 서비스 이용은 진행하지 않기로 결정 하였습니다.</p>
         </div>
-        <div class="field-row">
-          <span class="field-label">대표자</span>
-          <input class="field-input" type="text" id="representative" placeholder="대표자 성명을 입력하세요">
+        <hr class="section-divider">
+        <div class="fields-section">
+          <div class="section-label">기본 정보</div>
+          <div class="field-row">
+            <span class="field-label">상 호</span>
+            <input class="field-input" type="text" id="companyName" placeholder="상호명을 입력하세요">
+          </div>
+          <div class="field-row">
+            <span class="field-label">대표자</span>
+            <input class="field-input" type="text" id="representative" placeholder="대표자 성명을 입력하세요">
+          </div>
+          <div class="field-row">
+            <span class="field-label">작성일</span>
+            <span class="date-display" id="dateDisplay"></span>
+          </div>
         </div>
-        <div class="field-row">
-          <span class="field-label">작성일</span>
-          <span class="date-display" id="dateDisplay"></span>
+        <hr class="section-divider">
+        <div class="section-label">전자 서명</div>
+        <div class="signature-section">
+          <div class="sig-header">
+            <span>아래 공간에 서명해 주세요</span>
+            <button class="sig-clear" onclick="clearSignature()">지우기</button>
+          </div>
+          <canvas id="signatureCanvas"></canvas>
+          <div class="sig-instruction">마우스 또는 손가락으로 서명란에 서명하세요</div>
         </div>
-      </div>
-      <hr class="section-divider">
-      <div class="section-label">전자 서명</div>
-      <div class="signature-section">
-        <div class="sig-header">
-          <span>아래 공간에 서명해 주세요</span>
-          <button class="sig-clear" onclick="clearSignature()">지우기</button>
+        <div class="msg error" id="errorMsg">⚠ 서명 및 필수 항목(상호, 대표자)을 모두 입력해 주세요.</div>
+        <div class="msg loading" id="loadingMsg">⏳ 제출 중입니다... PDF 생성 중이에요, 잠시만요.</div>
+        <div class="submit-area">
+          <button class="submit-btn" id="submitBtn" onclick="submitForm()">동의서 제출</button>
         </div>
-        <canvas id="signatureCanvas"></canvas>
-        <div class="sig-instruction">마우스 또는 손가락으로 서명란에 서명하세요</div>
-      </div>
-      <div class="msg error" id="errorMsg">⚠ 서명 및 필수 항목(상호, 대표자)을 모두 입력해 주세요.</div>
-      <div class="msg loading" id="loadingMsg">⏳ 제출 중입니다... PDF 생성 중이에요, 잠시만요.</div>
-      <div class="submit-area">
-        <button class="submit-btn" id="submitBtn" onclick="submitForm()">동의서 제출</button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="overlay" id="overlay">
-  <div class="popup">
-    <div class="check-icon">
+<!-- 완료 화면 -->
+<div class="done-screen" id="doneScreen">
+  <div class="done-card">
+    <div class="done-icon">
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <div class="popup-title">동의서가 제출되었습니다</div>
-    <div class="popup-desc">원격 영상관제 서비스 미사용 동의서가<br>정상적으로 접수되었습니다.</div>
-    <div class="popup-info" id="popupInfo"></div>
-    <div class="popup-btns">
+    <div class="done-title">동의서 제출 완료</div>
+    <div class="done-desc">원격 영상관제 서비스 미사용 동의서가<br>정상적으로 접수되었습니다.</div>
+    <div class="done-info" id="doneInfo"></div>
+    <div class="done-notice">✅ 본 창을 닫으셔도 됩니다.</div>
+    <div class="done-pdf" id="donePdf">
       <a class="btn-pdf" id="pdfLink" href="#" target="_blank">📄 PDF 열기</a>
-      <button class="btn-close" onclick="closePopup()">확인</button>
     </div>
+    <div class="done-logo">ADT 캡스</div>
   </div>
 </div>
 
@@ -180,7 +199,6 @@
     hasSig = false;
   }
 
-  // 서명 이미지 압축 (URL 길이 제한 대응)
   function getCompressedSignature() {
     const small = document.createElement('canvas');
     small.width = 300;
@@ -255,30 +273,19 @@
       console.error('전송 오류:', err);
     }
 
-    loadEl.style.display = 'none';
-    btn.disabled = false;
-
-    document.getElementById('popupInfo').innerHTML =
+    // 폼 숨기고 완료 화면 표시
+    document.getElementById('formScreen').style.display = 'none';
+    document.getElementById('doneInfo').innerHTML =
       '<strong>상 호</strong>: ' + company + '<br>' +
       '<strong>대표자</strong>: ' + rep + '<br>' +
       '<strong>작성일</strong>: ' + todayStr;
 
-    const pdfEl = document.getElementById('pdfLink');
     if (pdfUrl) {
-      pdfEl.href = pdfUrl;
-      pdfEl.style.display = 'block';
+      document.getElementById('pdfLink').href = pdfUrl;
+      document.getElementById('donePdf').style.display = 'block';
     }
 
-    document.getElementById('overlay').classList.add('active');
-  }
-
-  function closePopup() {
-    window.close();
-    document.getElementById('overlay').classList.remove('active');
-    document.getElementById('companyName').value = '';
-    document.getElementById('representative').value = '';
-    clearSignature();
-    document.getElementById('dateDisplay').textContent = getTodayStr();
+    document.getElementById('doneScreen').classList.add('active');
   }
 </script>
 </body>
